@@ -41,16 +41,19 @@ def naked_twins(values):
     strategy repeatedly).
     """
     duplicate_box = []
+
     for unit in unitlist:
         s = set()
+        counter = 1
         #Save the values that are repeated in the unit
         duplicate_values = [values[box] for box in unit if (values[box] in s and len(values[box]) == 2) or s.add(values[box])]
         #save the name of the boxes that has those particular values
         duplicate_box_aux = [box for duplicate in duplicate_values for box in unit if values[box] == duplicate]
         #Save the paired twins and also the value that they had --> previous to any posterior change.
-        for pos,element in enumerate(duplicate_box_aux[::2]):
-            if ([element, duplicate_box_aux[pos + 1], values[element]]) not in duplicate_box:
-                duplicate_box.append([element, duplicate_box_aux[pos + 1], values[element]])
+        for pos, element in enumerate(duplicate_box_aux[::2]):
+            if ([element, duplicate_box_aux[pos + 1 * counter], values[element]]) not in duplicate_box:
+                duplicate_box.append([element, duplicate_box_aux[pos + 1 * counter], values[element]])
+            counter += 1
    # For those boxes that are twins find their mutual peers and substract the values to them
     for element in duplicate_box:
         combined_twins=set(peers[element[0]])&set(peers[element[1]])
@@ -116,6 +119,7 @@ def reduce_puzzle(values):
         # Use the Only Choice Strategy
         values = only_choice(values)
         # Check how many boxes have a determined value, to compare
+        values=naked_twins(values)
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         # If no new values were added, stop the loop.
         stalled = solved_values_before == solved_values_after
@@ -171,15 +175,15 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
-    #values = grid2values(grid)
-    values={"A2": "9", "H3": "2456789", "H4": "1", "B6": "1", "H9": "2345678", "F6": "23568", "C9": "13456", "C7": "13456", "B9": "9", "I6": "4", "B2": "2", "I5": "35678", "B7": "7", "H8": "234567", "F3": "25689", "C2": "68", "F2": "7", "G6": "9", "A5": "3468", "E6": "23568", "I2": "123568", "E1": "123689", "E3": "25689", "E9": "12345678", "F9": "1234568", "G1": "1234678", "H6": "23568", "H2": "23568", "I3": "25678", "C3": "4678", "E4": "234678", "G8": "1234567", "D1": "123689", "E7": "1234568", "F8": "1234569", "C1": "4678", "D8": "1235679", "A1": "2468", "A6": "7", "B5": "46", "H1": "2346789", "A8": "2346", "G5": "35678", "D6": "23568", "G4": "23678", "D9": "1235678", "F7": "1234568", "F1": "123689", "E5": "13456789", "D5": "1356789", "D3": "25689", "G3": "245678", "F4": "23468", "H5": "35678", "G9": "12345678", "B4": "46", "D4": "23678", "A9": "2346", "F5": "1345689", "I8": "123567", "G7": "1234568", "C8": "13456", "E8": "12345679", "I7": "9", "C6": "368", "B8": "8", "D2": "4", "I4": "23678", "G2": "123568", "H7": "234568", "C4": "9", "A3": "1", "E2": "123568", "B3": "3", "I9": "1235678", "B1": "5", "D7": "123568", "A7": "2346", "A4": "5", "I1": "123678", "C5": "2"}
+    values = grid2values(grid)
+    #values={"A2": "9", "H3": "2456789", "H4": "1", "B6": "1", "H9": "2345678", "F6": "23568", "C9": "13456", "C7": "13456", "B9": "9", "I6": "4", "B2": "2", "I5": "35678", "B7": "7", "H8": "234567", "F3": "25689", "C2": "68", "F2": "7", "G6": "9", "A5": "3468", "E6": "23568", "I2": "123568", "E1": "123689", "E3": "25689", "E9": "12345678", "F9": "1234568", "G1": "1234678", "H6": "23568", "H2": "23568", "I3": "25678", "C3": "4678", "E4": "234678", "G8": "1234567", "D1": "123689", "E7": "1234568", "F8": "1234569", "C1": "4678", "D8": "1235679", "A1": "2468", "A6": "7", "B5": "46", "H1": "2346789", "A8": "2346", "G5": "35678", "D6": "23568", "G4": "23678", "D9": "1235678", "F7": "1234568", "F1": "123689", "E5": "13456789", "D5": "1356789", "D3": "25689", "G3": "245678", "F4": "23468", "H5": "35678", "G9": "12345678", "B4": "46", "D4": "23678", "A9": "2346", "F5": "1345689", "I8": "123567", "G7": "1234568", "C8": "13456", "E8": "12345679", "I7": "9", "C6": "368", "B8": "8", "D2": "4", "I4": "23678", "G2": "123568", "H7": "234568", "C4": "9", "A3": "1", "E2": "123568", "B3": "3", "I9": "1235678", "B1": "5", "D7": "123568", "A7": "2346", "A4": "5", "I1": "123678", "C5": "2"}
     values = search(values)
     return values
 
 
 
 if __name__ == '__main__':
-    diag_sudoku_grid = '9.1....8.8.5.7..4.2.4....6...7......5..............83.3..6......9................'
+    diag_sudoku_grid = '........4......1.....6......7....2.8...372.4.......3.7......4......5.6....4....2.'
     display(grid2values(diag_sudoku_grid))
     result = solve(diag_sudoku_grid)
     display(result)
